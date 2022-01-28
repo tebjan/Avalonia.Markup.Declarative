@@ -1,31 +1,33 @@
 using System;
 using System.Reflection;
 
-namespace AvaloniaExtensionGenerator;
-public class MagicalSetterGenerator : SetterGeneratorBase
+namespace AvaloniaExtensionGenerator
 {
-    public override string GetPropertySetterExtensionOverride(PropertyExtensionInfo info)
+    public class MagicalSetterGenerator : SetterGeneratorBase
     {
-        var argsString = $"{info.ValueTypeSource} value = default, BindingMode? bindingMode = null, IValueConverter converter = null, object bindingSource = null,"
-                + $" [CallerArgumentExpression(\"value\")] string ps = null)";
-        //direct type access
-        var extensionText =
-            $"public static {info.ControlTypeName} {info.ExtensionName}"
-            + $"(this {info.ControlTypeName} control, {argsString}"
-            + getSetterBody();
-
-        //base type generic acess
-        if (Config.BaseTypes.Contains(info.ControlType))
+        public override string GetPropertySetterExtensionOverride(PropertyExtensionInfo info)
         {
-            extensionText =
-                $"public static T {info.ExtensionName}<T>"
-                + $"(this T control, {argsString}"
-                + $" where T : {info.ControlTypeName}{Environment.NewLine}"
+            var argsString = $"{info.ValueTypeSource} value = default, BindingMode? bindingMode = null, IValueConverter converter = null, object bindingSource = null,"
+                    + $" [CallerArgumentExpression(\"value\")] string ps = null)";
+            //direct type access
+            var extensionText =
+                $"public static {info.ControlTypeName} {info.ExtensionName}"
+                + $"(this {info.ControlTypeName} control, {argsString}"
                 + getSetterBody();
+
+            //base type generic acess
+            if (Config.BaseTypes.Contains(info.ControlType))
+            {
+                extensionText =
+                    $"public static T {info.ExtensionName}<T>"
+                    + $"(this T control, {argsString}"
+                    + $" where T : {info.ControlTypeName}{Environment.NewLine}"
+                    + getSetterBody();
+            }
+
+            string getSetterBody() => $"=> control._setEx({info.ControlTypeName}.{info.FieldInfo.Name}, ps, () => control.{info.PropertyName} = value, bindingMode, converter, bindingSource);";
+
+            return extensionText;
         }
-
-        string getSetterBody() => $"=> control._setEx({info.ControlTypeName}.{info.FieldInfo.Name}, ps, () => control.{info.PropertyName} = value, bindingMode, converter, bindingSource);";
-
-        return extensionText;
     }
 }

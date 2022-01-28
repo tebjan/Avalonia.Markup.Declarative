@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using System.Reflection;
 
-namespace AvaloniaExtensionGenerator;
-
-public interface IEventExtensionGenerator
+namespace AvaloniaExtensionGenerator
 {
-    Config Config { set; }
-    string? GetEventExtension(EventInfo @event, out IEnumerable<string> usedNamespaces);
+
+    public interface IEventExtensionGenerator
+    {
+        Config Config { set; }
+        string? GetEventExtension(EventInfo @event, out IEnumerable<string> usedNamespaces);
+    }
 }

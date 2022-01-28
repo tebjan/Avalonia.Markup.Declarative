@@ -1,4 +1,8 @@
-﻿using Avalonia.Controls.Templates;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Templates;
+using Avalonia.Data;
+using Avalonia.Layout;
+using Avalonia.Markup.Declarative;
 
 public static class StaticResources
 {

@@ -1,11 +1,13 @@
 ﻿using Avalonia.Media;
 
-namespace Avalonia.Markup.Declarative;
-
-public static class ColorExtensions
+namespace Avalonia.Markup.Declarative
 {
-    public static Color ToColor(this string hexString)
+
+    public static class ColorExtensions
     {
-        return Color.Parse(hexString);
+        public static Color ToColor(this string hexString)
+        {
+            return Color.Parse(hexString);
+        }
     }
 }

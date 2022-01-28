@@ -1,84 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using static AvaloniaExtensionGenerator.AvaloniaTypeHelper;
 
-namespace AvaloniaExtensionGenerator;
-
-public class EventsExtensionGenerator
+namespace AvaloniaExtensionGenerator
 {
-    public string OutputPath { get; set; }
 
-    public Config Config { get; set; }
-
-    public IEventExtensionGenerator[] Generators { get; private set; }
-
-    public EventsExtensionGenerator(Config config, string outputPath, params IEventExtensionGenerator[] generators)
+    public class EventsExtensionGenerator
     {
-        Config = config;
-        OutputPath = outputPath;
-        Generators = generators;
+        public string OutputPath { get; set; }
 
-        foreach (var generator in Generators)
-            generator.Config = Config;
-    }
+        public Config Config { get; set; }
 
+        public IEventExtensionGenerator[] Generators { get; private set; }
 
-    public void Generate()
-    {
-        var controlTypes = GetControlTypes(Config);
-
-        var nameSpaces = new HashSet<string>(Config.InitialNamespaces);
-        var extensionClassesString = GetExtensionClasses(controlTypes, ref nameSpaces);
-
-        var sb = new StringBuilder();
-        foreach (var ns in nameSpaces.OrderBy(x => x))
-            sb.AppendLine($"using {ns};");
-
-        sb.AppendLine();
-        sb.AppendLine("namespace Avalonia.Markup.Declarative;");
-        sb.AppendLine(extensionClassesString);
-
-        File.WriteAllText(OutputPath, sb.ToString());
-    }
-
-
-    private string GetExtensionClasses(IEnumerable<Type> controlTypes, ref HashSet<string> namespaces)
-    {
-        var sb = new StringBuilder();
-        var i = 0;
-
-        foreach (var controlType in controlTypes)
+        public EventsExtensionGenerator(Config config, string outputPath, params IEventExtensionGenerator[] generators)
         {
-            if (Config.Exclude.Contains(controlType))
-                continue;
+            Config = config;
+            OutputPath = outputPath;
+            Generators = generators;
 
-            var events = controlType.GetEvents().Where(x=>x.DeclaringType == controlType).ToArray();
-
-            if (!events.Any())
-                continue;
-               
-            Console.WriteLine(controlType.Name);
-
-            sb.AppendLine($"public static partial class {controlType.Name}EventsExtensions");
-            sb.AppendLine("{");
-
-            foreach (var eventInfo in events)
-            {
-                Console.WriteLine($"\t{i++} - {eventInfo.Name} : {eventInfo.EventHandlerType}");
-
-                foreach (var generator in Generators)
-                {
-                    var setterExtension = generator.GetEventExtension(eventInfo, out var usedNamespaces);
-                    if (string.IsNullOrWhiteSpace(setterExtension))
-                        continue;
-
-                    AddUsedNamespaces(usedNamespaces, ref namespaces);
-
-                    sb.AppendLine(setterExtension);
-                }
-            }
-                
-            sb.AppendLine("}");
+            foreach (var generator in Generators)
+                generator.Config = Config;
         }
-        return sb.ToString();
+
+
+        public void Generate()
+        {
+            var controlTypes = GetControlTypes(Config);
+
+            var nameSpaces = new HashSet<string>(Config.InitialNamespaces);
+            var extensionClassesString = GetExtensionClasses(controlTypes, ref nameSpaces);
+
+            var sb = new StringBuilder();
+            foreach (var ns in nameSpaces.OrderBy(x => x))
+                sb.AppendLine($"using {ns};");
+
+            sb.AppendLine();
+            sb.AppendLine("namespace Avalonia.Markup.Declarative;");
+            sb.AppendLine(extensionClassesString);
+
+            File.WriteAllText(OutputPath, sb.ToString());
+        }
+
+
+        private string GetExtensionClasses(IEnumerable<Type> controlTypes, ref HashSet<string> namespaces)
+        {
+            var sb = new StringBuilder();
+            var i = 0;
+
+            foreach (var controlType in controlTypes)
+            {
+                if (Config.Exclude.Contains(controlType))
+                    continue;
+
+                var events = controlType.GetEvents().Where(x => x.DeclaringType == controlType).ToArray();
+
+                if (!events.Any())
+                    continue;
+
+                Console.WriteLine(controlType.Name);
+
+                sb.AppendLine($"public static partial class {controlType.Name}EventsExtensions");
+                sb.AppendLine("{");
+
+                foreach (var eventInfo in events)
+                {
+                    Console.WriteLine($"\t{i++} - {eventInfo.Name} : {eventInfo.EventHandlerType}");
+
+                    foreach (var generator in Generators)
+                    {
+                        var setterExtension = generator.GetEventExtension(eventInfo, out var usedNamespaces);
+                        if (string.IsNullOrWhiteSpace(setterExtension))
+                            continue;
+
+                        AddUsedNamespaces(usedNamespaces, ref namespaces);
+
+                        sb.AppendLine(setterExtension);
+                    }
+                }
+
+                sb.AppendLine("}");
+            }
+            return sb.ToString();
+        }
     }
 }

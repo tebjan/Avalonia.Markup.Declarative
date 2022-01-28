@@ -1,15 +1,16 @@
 ﻿using Avalonia.Data;
 using Avalonia.Data.Converters;
 
-namespace Avalonia.Markup.Declarative;
-
-public static class BindingExtensions
+namespace Avalonia.Markup.Declarative
 {
-    public static TBinding Converter<TBinding>(this TBinding binding, IValueConverter converter)
-        where TBinding : Binding
+    public static class BindingExtensions
     {
-        binding.Converter = converter;
-        return binding;
-    }
+        public static TBinding Converter<TBinding>(this TBinding binding, IValueConverter converter)
+            where TBinding : Binding
+        {
+            binding.Converter = converter;
+            return binding;
+        }
 
+    }
 }

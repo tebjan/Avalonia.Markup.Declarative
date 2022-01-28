@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls.Primitives;
+﻿using Avalonia;
+using Avalonia.Controls.Primitives;
+using System;
 
 public class MyCustomTemplatedControl : TemplatedControl
 {

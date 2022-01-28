@@ -2,63 +2,64 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Avalonia.Markup.Declarative;
-
-public static class HotReloadManager
+namespace Avalonia.Markup.Declarative
 {
-    private static readonly Dictionary<Type, HashSet<IReloadable>> _instances = new();
-
-    public static event Action<Type[]?> HotReloaded;
-
-    private static void OnHotReloaded(Type[]? types) => HotReloaded?.Invoke(types);
-
-    public static void ClearCache(Type[]? types)
+    public static class HotReloadManager
     {
-        Console.WriteLine("ClearCache for types: " + PrintTypes(types));
-    }
+        private static readonly Dictionary<Type, HashSet<IReloadable>> _instances = new();
 
-    public static void UpdateApplication(Type[]? types)
-    {
-        Console.WriteLine("UpdateApplication for types: " + PrintTypes(types));
+        public static event Action<Type[]?> HotReloaded;
 
-        foreach (var type in types)
+        private static void OnHotReloaded(Type[]? types) => HotReloaded?.Invoke(types);
+
+        public static void ClearCache(Type[]? types)
         {
-            if (!_instances.TryGetValue(type, out var instances)) continue;
-
-            foreach (var instance in instances) 
-                instance.Reload();
+            Console.WriteLine("ClearCache for types: " + PrintTypes(types));
         }
 
-        OnHotReloaded(types);
-    }
-
-    public static string PrintTypes(Type[]? types)
-    {
-        if(types != null)
+        public static void UpdateApplication(Type[]? types)
         {
-            return string.Join(", ", types.Select(t => t.Name));
-        }
-        return "";
-    }
+            Console.WriteLine("UpdateApplication for types: " + PrintTypes(types));
 
-    internal static void RegisterInstance(IReloadable instance)
-    {
-        var type = instance.GetType();
-        if (!_instances.TryGetValue(type, out var instances))
-        {
-            instances = new HashSet<IReloadable>();
-            _instances[type] = instances;
+            foreach (var type in types)
+            {
+                if (!_instances.TryGetValue(type, out var instances)) continue;
+
+                foreach (var instance in instances)
+                    instance.Reload();
+            }
+
+            OnHotReloaded(types);
         }
 
-        instances.Add(instance);
-    }
+        public static string PrintTypes(Type[]? types)
+        {
+            if (types != null)
+            {
+                return string.Join(", ", types.Select(t => t.Name));
+            }
+            return "";
+        }
 
-    internal static void UnregisterInstance(IReloadable instance)
-    {
-        var type = instance.GetType();
-        if (!_instances.TryGetValue(type, out var instances)) return;
+        internal static void RegisterInstance(IReloadable instance)
+        {
+            var type = instance.GetType();
+            if (!_instances.TryGetValue(type, out var instances))
+            {
+                instances = new HashSet<IReloadable>();
+                _instances[type] = instances;
+            }
 
-        if(instances.Contains(instance))
-            instances.Remove(instance);
+            instances.Add(instance);
+        }
+
+        internal static void UnregisterInstance(IReloadable instance)
+        {
+            var type = instance.GetType();
+            if (!_instances.TryGetValue(type, out var instances)) return;
+
+            if (instances.Contains(instance))
+                instances.Remove(instance);
+        }
     }
 }

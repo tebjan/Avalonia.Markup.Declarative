@@ -1,4 +1,9 @@
-﻿public static class EventsExtensions
+﻿using Avalonia.Controls;
+using Avalonia.Interactivity;
+using System;
+using System.Reactive.Linq;
+
+public static class EventsExtensions
 {
     public static IObservable<RoutedEventArgs> OnClick(this Button button)
     {

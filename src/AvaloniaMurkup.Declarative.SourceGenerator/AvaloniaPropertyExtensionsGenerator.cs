@@ -75,7 +75,7 @@ namespace Avalonia.Markup.Declarative.SourceGenerator
 
                     if (field.Declaration.Type is GenericNameSyntax
                         {
-                            Identifier.ValueText: ("DirectProperty" or "StyledProperty" or "AttachedProperty")
+                            //Identifier.ValueText: ("DirectProperty" or "StyledProperty" or "AttachedProperty")
                         })
                     {
                         var extensionString = GetPropertySetterExtension(typeName, field);

@@ -1,4 +1,9 @@
-﻿public static class AppBuilderMinimalExtensions
+﻿using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Themes.Fluent;
+using System;
+
+public static class AppBuilderMinimalExtensions
 {
     public static TAppBuilder UseFluentTheme<TAppBuilder>(this TAppBuilder builder, FluentThemeMode mode = FluentThemeMode.Light)
         where TAppBuilder : AppBuilderBase<TAppBuilder>, new()

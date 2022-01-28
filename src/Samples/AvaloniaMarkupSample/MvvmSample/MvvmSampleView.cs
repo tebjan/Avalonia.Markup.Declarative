@@ -1,21 +1,27 @@
-﻿namespace AvaloniaMarkupSample.MvvmSample;
+﻿using Avalonia.Controls;
+using Avalonia.Data;
+using Avalonia.Markup.Declarative;
 
-public class MvvmSampleView : ViewBase<MvvmSampleViewModel>
+namespace AvaloniaMarkupSample.MvvmSample
 {
-    protected override void OnCreated()
+
+    public class MvvmSampleView : ViewBase<MvvmSampleViewModel>
     {
-        ViewModel = new MvvmSampleViewModel();
+        protected override void OnCreated()
+        {
+            ViewModel = new MvvmSampleViewModel();
+        }
+
+        protected override object Build(MvvmSampleViewModel vm) =>
+            new StackPanel()
+                .Children(
+                    new TextBlock()
+                        .Text(@vm.MyProperty),
+
+                    new Button()
+                        .Content("Execute Command")
+                        .Command(new Binding(nameof(vm.MyCommand)))
+                        .CommandParameter()
+                );
     }
-
-    protected override object Build(MvvmSampleViewModel vm) =>
-        new StackPanel()
-            .Children(
-                new TextBlock()
-                    .Text(@vm.MyProperty),
-
-                new Button()
-                    .Content("Execute Command")
-                    .Command(new Binding(nameof(vm.MyCommand)))
-                    .CommandParameter()
-            );
 }

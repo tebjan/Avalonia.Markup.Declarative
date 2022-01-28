@@ -1,6 +1,7 @@
-﻿namespace Avalonia.Markup.Declarative;
-
-public interface IReloadable
+﻿namespace Avalonia.Markup.Declarative
 {
-    void Reload();
+    public interface IReloadable
+    {
+        void Reload();
+    }
 }

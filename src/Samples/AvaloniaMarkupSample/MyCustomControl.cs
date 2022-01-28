@@ -1,4 +1,11 @@
-﻿public class MyCustomControl : ViewBase
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Data;
+using Avalonia.Layout;
+using Avalonia.Markup.Declarative;
+using System;
+
+public class MyCustomControl : ViewBase
 {
     #region NewValue Styled Avalonia Property
     public string? NewValue

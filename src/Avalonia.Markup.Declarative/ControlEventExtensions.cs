@@ -1,13 +1,15 @@
 ﻿using System;
 
-namespace Avalonia.Markup.Declarative;
-
-public static partial class ControlEventExtensions
+namespace Avalonia.Markup.Declarative
 {
-    public static TControl _setEvent<TControl, THandler>(this TControl control, THandler handler, Action<THandler> subscribe, Action<THandler> unsubscribe)
-        where TControl : AvaloniaObject
+
+    public static partial class ControlEventExtensions
     {
-        subscribe?.Invoke(handler);
-        return control;
+        public static TControl _setEvent<TControl, THandler>(this TControl control, THandler handler, Action<THandler> subscribe, Action<THandler> unsubscribe)
+            where TControl : AvaloniaObject
+        {
+            subscribe?.Invoke(handler);
+            return control;
+        }
     }
-} 
+}
